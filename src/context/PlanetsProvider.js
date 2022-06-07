@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import propTypes from 'prop-types';
-// import fetchPlanets from '../services/api';
 import PlanetsContext from './PlanetsContext';
 
 function PlanetsProvider({ children }) {
@@ -8,7 +7,12 @@ function PlanetsProvider({ children }) {
 
   const contextState = {
     data,
-    setData,
+    getPlanets: (planets) => {
+      setData([
+        ...data,
+        planets,
+      ]);
+    },
   };
 
   return (
