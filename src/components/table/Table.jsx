@@ -8,6 +8,13 @@ function Table() {
   const [operator, setOperator] = useState('maior que');
   const [value, setValue] = useState(0);
   const [filterByNumericValues, setNumericFilter] = useState([]);
+  const [options, setOptions] = useState([
+    'population',
+    'orbital_period',
+    'diameter',
+    'rotation_period',
+    'surface_water',
+  ]);
 
   useEffect(() => {
     const fetchPlanets = async () => {
@@ -37,7 +44,7 @@ function Table() {
     }), planetsFiltered);
 
     setPlanets(reduced);
-  }, [filterByName, filterByNumericValues]);
+  }, [filterByName, filterByNumericValues, data]);
 
   const handleFilter = ({ target }) => {
     setFilterByName(target.value.toLowerCase());
@@ -63,6 +70,8 @@ function Table() {
     };
     setNumericFilter([...filterByNumericValues, numericValues]);
     setValue(0);
+    const filterOpt = options.filter((option) => !option.includes(numericValues.column));
+    setOptions(filterOpt);
   };
 
   const handleRemoveFilter = (index) => {
@@ -94,11 +103,15 @@ function Table() {
             data-testid="column-filter"
             onChange={ handleColumn }
           >
-            <option>population</option>
-            <option>orbital_period</option>
-            <option>diameter</option>
-            <option>rotation_period</option>
-            <option>surface_water</option>
+            {
+              options.map((option) => (
+                <option
+                  key={ option }
+                >
+                  { option }
+                </option>
+              ))
+            }
           </select>
         </label>
 
