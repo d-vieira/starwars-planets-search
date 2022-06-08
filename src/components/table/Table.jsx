@@ -62,6 +62,19 @@ function Table() {
       value,
     };
     setNumericFilter([...filterByNumericValues, numericValues]);
+    setValue(0);
+  };
+
+  const handleRemoveFilter = (index) => {
+    const removeFilter = filterByNumericValues.filter((
+      _filter, filterIndex,
+    ) => filterIndex !== index);
+
+    setNumericFilter(removeFilter);
+  };
+
+  const handleRemoveAll = () => {
+    setNumericFilter([]);
   };
 
   return (
@@ -70,8 +83,8 @@ function Table() {
         <input
           type="text"
           placeholder="search a planet..."
-          onChange={ handleFilter }
           data-testid="name-filter"
+          onChange={ handleFilter }
         />
 
         <label htmlFor="column">
@@ -106,8 +119,8 @@ function Table() {
           type="number"
           value={ value }
           placeholder="0"
-          onChange={ handleValue }
           data-testid="value-filter"
+          onChange={ handleValue }
         />
 
         <button
@@ -117,13 +130,29 @@ function Table() {
         >
           Filter
         </button>
+
+        <button
+          type="button"
+          data-testid="button-remove-filters"
+          onClick={ handleRemoveAll }
+        >
+          Remove all Filters
+        </button>
       </form>
 
       {
         filterByNumericValues.map((filter, index) => (
-          <p key={ index }>
-            {`${filter.column} ${filter.operator} ${filter.value}`}
-          </p>
+          <div key={ index } data-testid="filter">
+            <p>
+              {`${filter.column} ${filter.operator} ${filter.value}`}
+            </p>
+            <button
+              type="button"
+              onClick={ () => handleRemoveFilter(index) }
+            >
+              X
+            </button>
+          </div>
         ))
       }
 
