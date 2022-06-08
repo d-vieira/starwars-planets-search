@@ -4,6 +4,10 @@ function Table() {
   const [data, setData] = useState([]);
   const [planets, setPlanets] = useState([]);
   const [filterByName, setFilterByName] = useState('');
+  const [column, setColumn] = useState('population');
+  const [operator, setOperator] = useState('maior que');
+  const [value, setValue] = useState(0);
+  const [filterByNumericValues, setNumericFilter] = useState([]);
 
   useEffect(() => {
     const fetchPlanets = async () => {
@@ -16,13 +20,48 @@ function Table() {
   }, []);
 
   useEffect(() => {
-    const planetFiltered = data.filter((planet) => planet.name
+    const planetsFiltered = data.filter((planet) => planet.name
       .toLowerCase().includes(filterByName));
-    setPlanets(planetFiltered);
-  }, [filterByName]);
+
+    const reduced = filterByNumericValues.reduce((acc, cur) => acc.filter((planet) => {
+      switch (cur.operator) {
+      case 'maior que':
+        return planet[cur.column] > Number(cur.value);
+      case 'menor que':
+        return planet[cur.column] < Number(cur.value);
+      case 'igual a':
+        return Number(planet[cur.column]) === Number(cur.value);
+      default:
+        return planetsFiltered;
+      }
+    }), planetsFiltered);
+
+    setPlanets(reduced);
+  }, [filterByName, filterByNumericValues]);
 
   const handleFilter = ({ target }) => {
     setFilterByName(target.value.toLowerCase());
+  };
+
+  const handleColumn = ({ target }) => {
+    setColumn(target.value);
+  };
+
+  const handleOperator = ({ target }) => {
+    setOperator(target.value);
+  };
+
+  const handleValue = ({ target }) => {
+    setValue(target.value);
+  };
+
+  const handleNumericFilter = () => {
+    const numericValues = {
+      column,
+      operator,
+      value,
+    };
+    setNumericFilter([...filterByNumericValues, numericValues]);
   };
 
   return (
@@ -34,7 +73,59 @@ function Table() {
           onChange={ handleFilter }
           data-testid="name-filter"
         />
+
+        <label htmlFor="column">
+          Choose a column
+          <select
+            id="column"
+            data-testid="column-filter"
+            onChange={ handleColumn }
+          >
+            <option>population</option>
+            <option>orbital_period</option>
+            <option>diameter</option>
+            <option>rotation_period</option>
+            <option>surface_water</option>
+          </select>
+        </label>
+
+        <label htmlFor="operator">
+          Operator
+          <select
+            id="operator"
+            data-testid="comparison-filter"
+            onChange={ handleOperator }
+          >
+            <option>maior que</option>
+            <option>menor que</option>
+            <option>igual a</option>
+          </select>
+        </label>
+
+        <input
+          type="number"
+          value={ value }
+          placeholder="0"
+          onChange={ handleValue }
+          data-testid="value-filter"
+        />
+
+        <button
+          type="button"
+          data-testid="button-filter"
+          onClick={ handleNumericFilter }
+        >
+          Filter
+        </button>
       </form>
+
+      {
+        filterByNumericValues.map((filter, index) => (
+          <p key={ index }>
+            {`${filter.column} ${filter.operator} ${filter.value}`}
+          </p>
+        ))
+      }
 
       <table>
         <thead>
