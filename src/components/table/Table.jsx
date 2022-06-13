@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
+// ORIGINAL FILE
+// APP MADE AS A SINGLE COMPONENT
+
 function Table() {
   const [data, setData] = useState([]);
   const [planets, setPlanets] = useState([]);
